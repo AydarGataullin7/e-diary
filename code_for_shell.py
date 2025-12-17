@@ -4,12 +4,20 @@ import random
 from datacenter.models import Schoolkid, Mark
 
 
+def get_schoolkid(schoolkid_name):
+    try:
+        schoolkid = Schoolkid.objects.get(full_name=schoolkid_name)
+    except Schoolkid.DoesNotExist:
+        print(f"Ученик '{schoolkid_name}' не найден")
+        return
+    except Schoolkid.MultipleObjectsReturned:
+        print(f"Найдено несколько учеников с именем '{schoolkid_name}'")
+        return
+    return schoolkid
+
+
 def fix_marks(schoolkid):
-    all_bad_marks = Mark.objects.filter(schoolkid=schoolkid, points__in=[2, 3])
-    good_mark = 5
-    for one_bad_mark in all_bad_marks:
-        one_bad_mark.points = good_mark
-        one_bad_mark.save()
+    Mark.objects.filter(schoolkid=schoolkid, points__in=[2, 3]).update(points=5)
 
 
 def remove_chastisements(schoolkid):
@@ -52,13 +60,8 @@ phrases = [
 
 
 def create_commendation(schoolkid_name, subject_title):
-    try:
-        schoolkid = Schoolkid.objects.get(full_name=schoolkid_name)
-    except Schoolkid.DoesNotExist:
-        print(f"Ученик '{schoolkid_name}' не найден")
-        return
-    except Schoolkid.MultipleObjectsReturned:
-        print(f"Найдено несколько учеников с именем '{schoolkid_name}'")
+    schoolkid = get_schoolkid(schoolkid_name)
+    if not schoolkid:
         return
 
     year = schoolkid.year_of_study

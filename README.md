@@ -6,9 +6,10 @@
 
 В файле ```code_for_shell.py``` находятся функции для автоматической работы с дневником:
 
-1. ```fix_marks(schoolkid)``` - исправляет плохие оценки (2 и 3) на 5
-2. ```remove_chastisements(schoolkid)``` - удаляет все замечания ученика
-3. ```create_commendation(schoolkid_name, subject_title)``` - создаёт похвалу от учителя
+1. `get_schoolkid(schoolkid_name)` - находит ученика по имени, обрабатывает ошибки
+2. `fix_marks(schoolkid)` - исправляет плохие оценки (2 и 3) на 5
+3. `remove_chastisements(schoolkid)` - удаляет все замечания ученика
+4. `create_commendation(schoolkid_name, subject_title)` - создаёт похвалу от учителя
 
 ## Способы запуска:
 
@@ -51,21 +52,21 @@ python manage.py shell
 ```
 ### 6. Импортируйте функции
 ```python
-from code_for_shell import fix_marks, remove_chastisements, create_commendation
+from code_for_shell import get_schoolkid, fix_marks, remove_chastisements, create_commendation
 ```
 ## Пример использования
 ```python
-# Сначала найдите ученика
-from datacenter.models import Schoolkid
-schoolkid = Schoolkid.objects.get(full_name="Фролов Иван", year_of_study=10, group_letter="А")
+# Найдите ученика с обработкой ошибок
+schoolkid = get_schoolkid("Фролов Иван")
 
+# Если ученик найден, выполните операции
+if schoolkid:
+    # Исправить оценки
+    fix_marks(schoolkid)
+    
+    # Удалить замечания
+    remove_chastisements(schoolkid)
 
-# Исправить оценки
-fix_marks(schoolkid)
-
-# Удалить замечания
-remove_chastisements(schoolkid)
-
-# Создать похвалу
+# Создать похвалу (функция сама найдет ученика)
 create_commendation("Фролов Иван", "Математика")
 ```
